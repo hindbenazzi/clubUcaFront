@@ -4,15 +4,13 @@ import clsx from 'clsx';
 import axios from "axios";
 import {
   Grid,
-  Input,
   InputLabel,
   InputAdornment,
   IconButton,
   Card,
-  TextField,
-  FormControl,
-  FormHelperText,
-  Divider
+  Divider,
+  Button,
+  FormControl
 } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -25,39 +23,43 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap'
   },
   margin: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(3)
   },
   withoutLabel: {
     marginTop: theme.spacing(3)
   },
   textField: {
-    width: "96%"
+    width: "90%"
   }
 }));
-const baseURL = "http://127.0.0.1:8000/user";
-const UserAdd = () => {
+const baseURL = "http://127.0.0.1:8000/local";
+const LocalUpdate = (props) => {
   const classes = useStyles();
   const cardStyle={
     width: "100%",
-    borderRadius: "3%"
+    borderRadius: "3%",
+    marginLeft:"200px"
   }
   const [values, setValues] = React.useState({
-    firstName: "",
-    lastName:  "",
-    email: "",
-    phoneNumber: "",
-    numAdesion: ""
+    nom: props.location.state.local.nom,
+    description:  props.location.state.local.description,
+    adresse: props.location.state.local.adresse,
+    prix: props.location.state.local.prix,
+    capacite: props.location.state.local.capacite,
+    type: props.location.state.local.type
   });
-    const addUser = async (e) => {
+ const updateLocal= async (e) => {
         e.preventDefault()
-        await axios.post(baseURL,values).then((response) => {
+        await axios.put(baseURL+'/'+props.location.state.local.id,values).then((response) => {
             console.log(response.data)
           });
     }
-    
-
   const handleChange = prop => event => {
+      if(prop=="prix"){
+        setValues({ ...values, [prop]: parseFloat(event.target.value) });
+      }else{
     setValues({ ...values, [prop]: event.target.value });
+      }
     console.log(values)
   };
 
@@ -73,16 +75,16 @@ const UserAdd = () => {
             <Divider className="my-4" />
 
             <div >
-            <FormControl
+               <FormControl
                 className={clsx(classes.margin, classes.textField)}
                 variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-fname">
-                  Prenom
+                  Nom du local
                 </InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-fname"
-                  value={values.firstName}
-                  onChange={handleChange('firstName')}
+                  value={values.nom}
+                  onChange={handleChange('nom')}
                   endAdornment={
                     <InputAdornment position="end">
                         <IconButton
@@ -99,12 +101,12 @@ const UserAdd = () => {
                 className={clsx(classes.margin, classes.textField)}
                 variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-lname">
-                 Nom
+                Description
                 </InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-lname"
-                  value={values.lastName}
-                  onChange={handleChange('lastName')}
+                  value={values.description}
+                  onChange={handleChange('description')}
                   endAdornment={
                     <InputAdornment position="end">
                         <IconButton
@@ -121,12 +123,12 @@ const UserAdd = () => {
                 className={clsx(classes.margin, classes.textField)}
                 variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-phone">
-                  Numéro de Téléphone
+                  Adresse
                 </InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-phone"
-                  value={values.phoneNumber}
-                  onChange={handleChange('phoneNumber')}
+                  value={values.adresse}
+                  onChange={handleChange('adresse')}
                   endAdornment={
                     <InputAdornment position="end">
                         <IconButton
@@ -143,12 +145,12 @@ const UserAdd = () => {
                 className={clsx(classes.margin, classes.textField)}
                 variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-mail">
-                  Email
+                 Prix
                 </InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-mail"
-                  value={values.email}
-                  onChange={handleChange('email')}
+                  value={values.prix}
+                  onChange={handleChange('prix')}
                   endAdornment={
                     <InputAdornment position="end">
                         <IconButton
@@ -165,12 +167,34 @@ const UserAdd = () => {
                 className={clsx(classes.margin, classes.textField)}
                 variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-adesion">
-                  Numéro d'adhesion
+                   Capacite
                 </InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-adesion"
-                  value={values.numAdesion}
-                  onChange={handleChange('numAdesion')}
+                  value={values.capacite}
+                  onChange={handleChange('capacite')}
+                  endAdornment={
+                    <InputAdornment position="end">
+                        <IconButton
+                        aria-label="toggle password visibility"
+                        edge="end">
+                            <AccountCircleOutlinedIcon />
+                        </IconButton>
+                    </InputAdornment>
+                  }
+                  labelWidth={150}
+                />
+              </FormControl>
+              <FormControl
+                className={clsx(classes.margin, classes.textField)}
+                variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-adesion">
+                  Type
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-adesion"
+                  value={values.type}
+                  onChange={handleChange('type')}
                   endAdornment={
                     <InputAdornment position="end">
                         <IconButton
@@ -184,9 +208,11 @@ const UserAdd = () => {
                 />
               </FormControl>
             </div>
-            <button className="m-2" variant="contained" color="primary" style={{marginLeft:"67%"}} onClick={addUser}>
-             Ajouter Utilisateur
-            </button>
+            <Button  variant="contained"
+                     size="medium"
+                     color="secondary" style={{marginLeft:"57%"}} onClick={updateLocal}>
+             Modifier Local
+            </Button>
             <br /><br />
         </ form>
           </Card>
@@ -196,4 +222,4 @@ const UserAdd = () => {
   );
 };
 
-export default UserAdd;
+export default LocalUpdate;

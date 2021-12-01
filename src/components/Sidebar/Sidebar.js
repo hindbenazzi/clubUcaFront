@@ -10,11 +10,13 @@ import {
   LibraryBooks as LibraryIcon,
   HelpOutline as FAQIcon,
   ArrowBack as ArrowBackIcon,
+  
 } from "@material-ui/icons";
 import { useTheme } from "@material-ui/styles";
 import { withRouter } from "react-router-dom";
 import classNames from "classnames";
-
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
 // styles
 import useStyles from "./styles";
 
@@ -30,11 +32,12 @@ import {
 } from "../../context/LayoutContext";
 
 const structure = [
-  { id: 0, label: "Dashboard", link: "/app/dashboard", icon: <HomeIcon /> },
   
-  { id: 2, label: "Gestion des Utilisateur", link: "/app/users", icon: <TableIcon /> },
-  { id: 3, label: "Gestion des Locals", link: "/app/locals", icon: <TableIcon /> },
- 
+  
+  { id: 2, label: "Gestion des Utilisateur", link: "/app/users", icon: <AccountCircleOutlinedIcon /> },
+  { id: 3, label: "Gestion des Locals", link: "/app/locals", icon: <HomeIcon /> },
+  { id: 4, label: "Gestion des Types", link: "/app/types", icon: <SupportIcon /> },
+  { id: 5, label: "Gestion des Capacites", link: "/app/capacites", icon: <TableIcon /> },
 ];
 
 function Sidebar({ location }) {

@@ -4,13 +4,12 @@ import clsx from 'clsx';
 import axios from "axios";
 import {
   Grid,
-
+  Button,
   InputLabel,
   InputAdornment,
   IconButton,
   Card,
   FormControl,
-  Button,
   Divider
 } from '@material-ui/core';
 
@@ -34,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 const baseURL = "http://127.0.0.1:8000/user";
-const UserUpdate = (props) => {
+const UserAdd = () => {
   const classes = useStyles();
   const cardStyle={
     width: "100%",
@@ -42,36 +41,26 @@ const UserUpdate = (props) => {
     marginLeft:"200px"
   }
   const [values, setValues] = React.useState({
-    firstName:props.location.state.user.firstName ,
-    lastName: props.location.state.user.lastName ,
-    email: props.location.state.user.email ,
-    phoneNumber: props.location.state.user.phone ,
-    numAdesion: props.location.state.user.numAdesion 
+    firstName: "",
+    lastName:  "",
+    email: "",
+    phoneNumber: "",
+    numAdesion: ""
   });
-  React.useEffect(() => {
-    console.log(props.location.state.user.id)
-   
-  }, []);
-
-    const updateUser = async (e) => {
+    const addUser = async (e) => {
         e.preventDefault()
-        await axios.put(baseURL+'/'+props.location.state.user.id,values).then((response) => {
+        await axios.post(baseURL,values).then((response) => {
             console.log(response.data)
           });
     }
+    
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value });
     console.log(values)
   };
 
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
-  };
 
-  const handleMouseDownPassword = event => {
-    event.preventDefault();
-  };
   const { action } = useParams();
   return (
     <Fragment>
@@ -196,8 +185,8 @@ const UserUpdate = (props) => {
             </div>
             <Button  variant="contained"
                      size="medium"
-                     color="secondary" style={{marginLeft:"57%"}} onClick={updateUser}>
-             Modifier Utilisateur
+                     color="secondary" style={{marginLeft:"57%"}} onClick={addUser}>
+             Ajouter Utilisateur
             </Button>
             <br /><br />
         </ form>
@@ -208,4 +197,4 @@ const UserUpdate = (props) => {
   );
 };
 
-export default UserUpdate;
+export default UserAdd;

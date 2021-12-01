@@ -3,27 +3,16 @@ import { Grid ,Button} from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import MUIDataTable from "mui-datatables";
 import axios from "axios";
-import { Redirect } from 'react-router';
+
 import { Link } from 'react-router-dom';
 // components
 import PageTitle from "../../components/PageTitle";
-import Widget from "../../components/Widget";
-import Table from "../dashboard/components/Table/Table";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddIcon from '@material-ui/icons/Add';
 
-// data
-import mock from "../dashboard/mock";
+
+
 import { Add } from "@material-ui/icons";
 
-const datatableData = [
-  {id:1,  firstname: "Gabby George", lastName: "Business Analyst", email: "Minneapolis", phoneNumber: 30, numAdesion: "$100,000"},
-  {id:2,  firstname: "Aiden Lloyd", lastName: "Business Consultant", email: "Dallas",  phoneNumber: 55, numAdesion: "$200,000" },
-  {id:3,  firstname: "Jaden Collins", lastName: "Attorney", email: "Santa Ana", phoneNumber: 27, numAdesion: "$500,000"},
-  {id:4,  firstname: "Franky Rees", lastName: "Business Analyst", email: "St. Petersburg", phoneNumber: 22, numAdesion: "$50,000"}
-  
-];
+
 const columns = [
   {
     label: "Id",
@@ -67,9 +56,14 @@ const baseURL1 = "http://127.0.0.1:8000/user";
 export default function Tables(props) {
   const classes = useStyles();
   const [users, setUsers] = React.useState([]);
-  const [empty, setEmpty] = React.useState(true);
   const [selected, setSelected] = React.useState([]);
 
+  const fetchData = async () => {
+    await axios.get(baseURL).then((response)=>{
+      setUsers(response.data);
+      console.log(response.data)
+    })
+  }
 React.useEffect(() => {
   const fetchData = async () => {
     await axios.get(baseURL).then((response)=>{
@@ -97,7 +91,14 @@ fetchData()
      numAdesion : rowData[5]}}
     })
   }
-  
+  const deleteItem=async (uId)=>{
+    axios
+  .delete(baseURL1+'/'+uId)
+  .then(() => {
+    fetchData()
+    
+  });
+}
   const onRowSelectionChange = (curRowSelected, allRowsSelected) => {
     console.log("All Selected: ", allRowsSelected);
     let ids=[];
@@ -109,6 +110,9 @@ fetchData()
   const onRowsDelete= (rowsDeleted, newData) => {
     console.log('rowsDeleted');
     console.log(selected);
+    selected.forEach((item,index)=>{
+      deleteItem(item)
+    })
     console.log(users[rowsDeleted.data[0].index].id)
   }
   const options = {

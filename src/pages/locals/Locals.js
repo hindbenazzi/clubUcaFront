@@ -6,13 +6,8 @@ import axios from "axios";
 import { Link } from 'react-router-dom';
 // components
 import PageTitle from "../../components/PageTitle";
-import Widget from "../../components/Widget";
-import Table from "../dashboard/components/Table/Table";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
+import { Add } from "@material-ui/icons";
 
-// data
-import mock from "../dashboard/mock";
 
 
 const columns = [
@@ -54,12 +49,18 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 const baseURL = "http://127.0.0.1:8000/locals/";
-const baseURL1 = "http://127.0.0.1:8000/user";
-export default function Locals() {
+const baseURL1 = "http://127.0.0.1:8000/local";
+export default function Locals(props) {
   const classes = useStyles();
   const [locals, setLocals] = React.useState([]);
-  const [empty, setEmpty] = React.useState(true);
+  const [selected, setSelected] = React.useState([]);
 
+  const fetchData = async () => {
+    await axios.get(baseURL).then((response)=>{
+      setLocals(response.data);
+      console.log(response.data)
+    })
+  }
 React.useEffect(() => {
   const fetchData = async () => {
     await axios.get(baseURL).then((response)=>{
@@ -73,28 +74,64 @@ fetchData()
  
 }, []);
   
-  const onRowClick = (rowData, rowMeta) => {
-    console.log("----RowClick");
-    console.log("rowData: ", rowData);
-    console.log("rowMeta: ", rowMeta);
-  }
+const onRowClick = (rowData, rowMeta) => {
+  console.log("----RowClick");
+  console.log("rowData: ", rowData);
+  console.log("rowMeta: ", rowMeta);
+   props.history.push({
+   pathname: "/app/updateLocal",
+   state: { local: {id:rowData[0] ,
+  nom:rowData[1],
+   description: rowData[2],
+   adresse: rowData[3],
+   prix : rowData[4],
+   capacite:"cap1",
+   type:rowData[5]
+  }}
+  })
+}
   
-  const onRowsSelect = (curRowSelected, allRowsSelected) => {
-    console.log("---RowSelect")
-    console.log("Row Selected: ", curRowSelected);
+  const deleteItem=async (uId)=>{
+    axios
+  .delete(baseURL1+'/'+uId)
+  .then(() => {
+    fetchData()
+    
+  });
+}
+
+  const onRowSelectionChange = (curRowSelected, allRowsSelected) => {
     console.log("All Selected: ", allRowsSelected);
+    let ids=[];
+    allRowsSelected.map((item)=>{
+      ids.push(locals[item.index].id)
+    })
+    setSelected(ids)
+  }
+  const onRowsDelete= (rowsDeleted, newData) => {
+    console.log('rowsDeleted');
+    console.log(selected);
+    selected.forEach((item,index)=>{
+      deleteItem(item)
+    })
+    console.log(locals[rowsDeleted.data[0].index].id)
   }
   const options = {
 		filterType: 'checkbox',
 		onRowClick: onRowClick,
-		onRowsSelect: onRowsSelect,
     enableNestedDataAccess: '.',
+		onRowSelectionChange: onRowSelectionChange,
+    onRowsDelete:onRowsDelete
     
 	};
  
   return (
     <>
-      <PageTitle title="Liste des locaux" />
+      <PageTitle title="Liste des locaux" button={<Link to="/app/addLocal"><Button
+      variant="contained"
+      size="medium"
+      color="secondary"
+    ><Add></Add></Button></Link>}/>
       <Grid container spacing={4}>
         <Grid item xs={12}>
           <MUIDataTable
